@@ -39,39 +39,39 @@ class SoundManager {
     this.volume = Math.max(0, Math.min(1, vol));
   }
 
-  // Background upbeat educational melody loop
+  // Background energetic game show melody loop
   public startBgm() {
     if (!this.enabled || this.bgmInterval) return;
     this.initCtx();
     if (!this.ctx) return;
 
-    const melodyNotes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 440.00, 349.23];
+    const melodyNotes = [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 880.00, 987.77];
     let noteIdx = 0;
 
-    // Play a gentle upbeat chime every 2.5 seconds
+    // Play an energetic upbeat arpeggio every 450ms for classroom game show vibe
     this.bgmInterval = window.setInterval(() => {
       if (!this.enabled || !this.ctx) return;
       try {
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = 'sine';
+        osc.type = 'triangle';
         osc.frequency.setValueAtTime(melodyNotes[noteIdx], now);
         noteIdx = (noteIdx + 1) % melodyNotes.length;
 
         gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(this.volume * 0.1, now + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        gain.gain.linearRampToValueAtTime(this.volume * 0.25, now + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
 
         osc.start(now);
-        osc.stop(now + 1.2);
+        osc.stop(now + 0.4);
       } catch {
         // Ignore
       }
-    }, 2500);
+    }, 450);
   }
 
   public stopBgm() {
